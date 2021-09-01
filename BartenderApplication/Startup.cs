@@ -8,6 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using BartenderApplication.Repository;
+using BartenderApplication.Services;
+using BartenderApplication.Services.Interfaces;
+using System.Security.Claims;
 
 namespace BartenderApplication
 {
@@ -24,6 +29,28 @@ namespace BartenderApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddSingleton<FakeRepository>();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Home/Login";
+                    options.Cookie.Name = "LoginCookie";
+                });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Employee",
+                    policy => policy.RequireClaim(ClaimTypes.Role, "Employee"));
+                options.AddPolicy("Customer",
+                    policy => policy.RequireClaim(ClaimTypes.Role, "Customer"));
+            }); 
+
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = "VMS.Session";
+                options.IdleTimeout = TimeSpan.FromMinutes(5);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,7 +71,10 @@ namespace BartenderApplication
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
