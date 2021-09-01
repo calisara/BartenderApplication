@@ -1,5 +1,31 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model List<BartenderApplication.Models.DrinksModel>
+
+<h2>Drinks Menu</h2>
+
+
+<section class="container">
+    <table class="table-primary">
+        <tr>
+            <th>Drink</th>
+            <th>Ingredients</th>
+            <th>Price</th>
+        </tr>
+        @foreach(var x in Model)
+            {
+    <tr>
+        <td>@x.DrinkName</td>
+        <td>@x.DrinkIngredients</td>
+        <td>@x.DrinkPrice</td>
+        <td>
+           @Html.ActionLink("Order", "CreateTicket", "Customer", new TicketsModel {Drink=x.DrinkName, Customer=User.Identity.Name}, new {@class= "btn btn-outline-light m-2" })
+        </td>
+    </tr>
+            }
+
+    </table>
+
+
+
+
+
+</section>
