@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using BartenderApplication.Models;
 using BartenderApplication.Repository;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using BartenderApplication.Models.ViewModels;
+using BartenderApplication.Services.Interfaces;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 
 namespace BartenderApplication.Controllers
@@ -23,7 +31,7 @@ namespace BartenderApplication.Controllers
         public IActionResult Index()
         {
             IEnumerable<DrinksModel> drinksmodel = _fakeRepository.Drinks;
-            return View("~/Views/Home/Customer", drinksmodel.ToList());
+            return View("~/Views/Home/Customer.cshtml", drinksmodel.ToList());
         }
 
         public IActionResult CreateTicket(TicketsModel ticketsModel)
